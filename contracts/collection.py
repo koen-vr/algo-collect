@@ -45,14 +45,37 @@ def approval_program():
         )
     )
 
-    # TODO assert that the asset can not be destroyed?
-    # TODO assert is a valid collection asset? (nft)
+    # TODO Swap scripts out with golang or nodejs
+    # - Goal has no asset creation without managers
+    is_valid_asset = And(
+        # Creation of an asset has id 0
+        Gtxn[0].config_asset() == Int(0),
+        # Creation is of type Asset Config
+        Gtxn[0].type_enum() == TxnType.AssetConfig,
+        # Requires a total of 1 and decimals 0
+        Gtxn[0].config_asset_total() == Int(1),
+        Gtxn[0].config_asset_decimals() == Int(0),
+        # Is not allowed to be frozen by default
+        Gtxn[0].config_asset_default_frozen() == Int(0),
+        # Requires that none of the managers are set
+        #Len(Gtxn[0].config_asset_manager()) == Int(0),
+        #Len(Gtxn[0].config_asset_reserve()) == Int(0),
+        #Len(Gtxn[0].config_asset_freeze()) == Int(0),
+        #Len(Gtxn[0].config_asset_clawback()) == Int(0),
+    )
+
+    has_valid_index = And(
+        # Is smaller then max
+        index.load() < Int(64512),
+        # Has not yet been reserved by an other asset
+        GetBit(GetByte(key_value, idx.load()), bit.load()) == Int(0),
+        # Needs the unit name of the asset to be formated with the index
+        BytesEq(Gtxn[0].config_asset_unit_name(), get_asset_unit_name(index.load()))
+    )
+
     do_reserve_index = If(And(
-            index.load() < Int(64512),
-            Gtxn[0].config_asset() == Int(0),
-            Gtxn[0].type_enum() == TxnType.AssetConfig,
-            GetBit(GetByte(key_value, idx.load()), bit.load()) == Int(0),
-            BytesEq(Gtxn[0].config_asset_unit_name(), get_asset_unit_name(index.load()))
+            is_valid_asset,
+            has_valid_index,
         ),
         Seq([
             App.globalPut(
