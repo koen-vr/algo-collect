@@ -26,8 +26,30 @@ def uint_to_bytes(arg):
                         )
                     )
                 ])
-
             ),
             string.load()
         ])
     )
+
+@Subroutine(TealType.bytes)
+def get_asset_unit_name(arg):
+
+    out = ScratchVar(TealType.bytes)
+    tmp = ScratchVar(TealType.bytes)
+    num = ScratchVar(TealType.uint64)
+
+    return Seq([
+        out.store(Bytes("#")),
+        tmp.store(uint_to_bytes(arg)),
+        For(num.store(Int(5) - Len(tmp.load())), num.load() > Int(0), num.store(num.load() - Int(1))).Do(
+            out.store(Concat(
+                out.load(), 
+                Bytes("0")
+            )),
+        ),
+        out.store(Concat(
+            out.load(),
+            uint_to_bytes(arg)
+        )),
+        out.load()
+    ])

@@ -13,11 +13,21 @@ ACC2=$(${gcmd} account list | awk '{ print $3 }' | tail -1)
 
 APP_ID=1
 
-# Max Index 64511
+# max index value 64511
 INDEX=64511
-TRUE=1
+UNITNAME="#64511"
 
-UNITNAME="APP#1"
+# min index value 0
+# INDEX=0
+# UNITNAME="#00000"
+
+# rand index value 123
+# INDEX=123
+# UNITNAME="#00123"
+
+# bad combo value 123
+# INDEX=123
+# UNITNAME="#00321"
 
 # create asset transactions
 

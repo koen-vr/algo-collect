@@ -1,5 +1,5 @@
 from pyteal import *
-from utility import uint_to_bytes
+from utility import *
 
 ## TODO Next add managment validation and setup
 
@@ -53,8 +53,8 @@ def approval_program():
             index.load() < Int(64512),
             Gtxn[0].config_asset() == Int(0),
             Gtxn[0].type_enum() == TxnType.AssetConfig,
-            BytesEq(Gtxn[0].config_asset_unit_name(), Bytes("APP#1")),
-            GetBit(GetByte(key_value, idx.load()), bit.load()) == Int(0)
+            GetBit(GetByte(key_value, idx.load()), bit.load()) == Int(0),
+            BytesEq(Gtxn[0].config_asset_unit_name(), get_asset_unit_name(index.load()))
         ),
         Seq([
             App.globalPut(
