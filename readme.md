@@ -31,4 +31,4 @@ In particular, no transactions should be made before calling `createapp.sh`.
 
 ## Credits
 
-Based off and ispired by: (algo-arrays)[https://github.com/gidonkatten/algo-arrays]
+Based off and inspired by: [algo-arrays](https://github.com/gidonkatten/algo-arrays)

@@ -1,8 +1,6 @@
 from pyteal import *
 from utility import *
 
-## TODO Next add managment validation and setup
-
 # Implements a basic byte array example
 def approval_program():
     
@@ -74,13 +72,18 @@ def approval_program():
         Int(0)
     )
 
-    # Set the manager status on the second account in the transaction
     handle_manager = If(And(
             is_manager,
+            # Needs a transaction group
             Global.group_size() == Int(2),
+            # Needs one new manager account
             Txn.accounts.length() == Int(1),
+            # Needs that account to call opt-in
             Gtxn[0].sender() == Txn.accounts[1],
-            Gtxn[0].on_completion() == OnComplete.OptIn
+            # Needs the other call to be of type opt-in
+            Gtxn[0].on_completion() == OnComplete.OptIn,
+            # Needs the call to be to the same application
+            Gtxn[0].application_id() == Txn.application_id(),
         ), 
         Seq([
             App.localPut(
@@ -98,10 +101,11 @@ def approval_program():
         Int(0)
     )
 
-    # Handle index state
     handle_reserve = If(And(
             is_manager,
+            # Require asset creation tx
             Global.group_size() == Int(2),
+            # Require function call and index
             Txn.application_args.length() == Int(2)
         ),
         Seq([
@@ -111,8 +115,8 @@ def approval_program():
             store_index,
             convert_to_keys,
             convert_to_string,
-            # Initialize key
-            # Final try to lock
+            # Init values on key
+            # Final try to reserve
             key_has_value,
             initialize_key,
             do_reserve_index
@@ -120,37 +124,40 @@ def approval_program():
         Int(0)
     )
 
-    # Setup Managment
     handle_create = Seq([
+        # Set the app creator as the initial manager
         App.localPut(Int(0), Bytes("manager"), Int(1)),
         Int(1)
     ])
 
-    # Handle Interaction
     handle_noop = Cond(
         [Txn.application_args[0] == Bytes("manager"), handle_manager],
         [Txn.application_args[0] == Bytes("reserve"), handle_reserve],
     )
 
-    # OptIn Managment
-    handle_optin = Seq([
-        Int(1)
+    handle_optin = And(
+        # Require a second call
+        Global.group_size() == Int(2),
+        # Needs to be an application call
+        Gtxn[1].type_enum() == TxnType.ApplicationCall,
+        # Needs the call to setup a new manager
+        Gtxn[1].application_args[0] == Bytes("manager"),
+        # Needs the call to be to the same application
+        Gtxn[1].application_id() == Txn.application_id(),
+        # Needs that call to set the sender as the manager
+        Gtxn[1].accounts[1] == Txn.accounts[0]
+    )
+
+    handle_closeout = Seq([ 
+        # Only close out if the sender is not the manager
+        App.localGet(Txn.sender(), Bytes("manager")) == Int(0)
     ])
 
-    # Disable exit
-    handle_closeout = Seq([
-        Int(0)
-    ])
+    # Disable updates, final no changes
+    handle_updateapp = Seq([ Int(0) ])
 
-    # Disable updates
-    handle_updateapp = Seq([
-        Int(0)
-    ])
-
-    # Disable removal
-    handle_deleteapp = Seq([
-        Int(0)
-    ])
+    # Disable removal, this data lives for ever
+    handle_deleteapp = Seq([ Int(0) ])
 
     program = Cond(
         [Txn.application_id() == Int(0), handle_create],
