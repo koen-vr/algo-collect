@@ -1,7 +1,11 @@
 from pyteal import *
 from utility import *
 
-# Implements a basic byte array example
+# Demo's a collection manager for NFT's (ASA)
+# The collection is a list of unique IDs assigned to the NFTs.
+# The manager tracks free IDs and specific NFTs store their ID in 
+# the 'unitname' parameter. The creation of an asset and reservation
+# of an ID is wrapped in an atomic transaction to make a secure link.
 def approval_program():
     
     # Index in to the global array
@@ -57,11 +61,11 @@ def approval_program():
         Gtxn[0].config_asset_decimals() == Int(0),
         # Is not allowed to be frozen by default
         Gtxn[0].config_asset_default_frozen() == Int(0),
-        # Requires that none of the managers are set
-        #Len(Gtxn[0].config_asset_manager()) == Int(0),
-        #Len(Gtxn[0].config_asset_reserve()) == Int(0),
-        #Len(Gtxn[0].config_asset_freeze()) == Int(0),
-        #Len(Gtxn[0].config_asset_clawback()) == Int(0),
+        # Requires the asset to be indestructable
+        Gtxn[0].config_asset_manager() == Global.zero_address(),
+        Gtxn[0].config_asset_freeze() == Global.zero_address(),
+        Gtxn[0].config_asset_reserve() == Global.zero_address(),
+        Gtxn[0].config_asset_clawback() == Global.zero_address(),
     )
 
     has_valid_index = And(

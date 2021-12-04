@@ -35,10 +35,11 @@ yarn-error.log*
 # algo files
 *.txs
 *.txn
-*.ltxn
 *.rej
+*.ltxn
 *.msgp
 *.teal
+*.frag
 
 # Specific
 splittransaction*
