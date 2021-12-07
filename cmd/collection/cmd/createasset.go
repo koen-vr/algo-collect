@@ -178,7 +178,7 @@ var CreateAssetCmd = &cobra.Command{
 		fmt.Printf("Asset Created deployed with id: %d\n", txInfo.AssetIndex)
 
 		out, err := exec.List([]string{
-			"-c", fmt.Sprintf("goal app read -d ./net1/Primary --app-id %d --guess-format --global", appIdx),
+			"-c", fmt.Sprintf("goal app read -d ./net1/primary --app-id %d --guess-format --global", appIdx),
 		})
 		if len(out) > 0 {
 			fmt.Println()

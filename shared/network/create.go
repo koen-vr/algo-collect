@@ -36,7 +36,7 @@ func Create() error {
 	// TODO: Fix this hack, the config struct is hacky
 
 	cfg := Config{}
-	file, err := ioutil.ReadFile("./net1/Primary/config.json")
+	file, err := ioutil.ReadFile("./net1/primary/config.json")
 	json.Unmarshal(file, &cfg)
 	if nil != err {
 		return err
@@ -44,7 +44,7 @@ func Create() error {
 	cfg.EnableDeveloperAPI = true
 
 	jsonString, _ := json.Marshal(cfg)
-	ioutil.WriteFile("./net1/Primary/config.json", jsonString, os.ModePerm)
+	ioutil.WriteFile("./net1/primary/config.json", jsonString, os.ModePerm)
 
 	out, err = exec.List([]string{
 		"-c", "goal network start -r ./net1",

@@ -180,7 +180,7 @@ var CreateappCmd = &cobra.Command{
 		ioutil.WriteFile("./app.frag", jsonString, os.ModePerm)
 
 		out, err = exec.List([]string{
-			"-c", fmt.Sprintf("goal app read -d ./net1/Primary --app-id %d --guess-format --local --from %s", txInfo.ApplicationIndex, sender.String()),
+			"-c", fmt.Sprintf("goal app read -d ./net1/primary --app-id %d --guess-format --local --from %s", txInfo.ApplicationIndex, sender.String()),
 		})
 		if len(out) > 0 {
 			fmt.Println()

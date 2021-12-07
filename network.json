@@ -1,23 +1,23 @@
 {
     "Genesis": {
-        "NetworkName": "",
+        "NetworkName": "private",
         "ConsensusProtocol": "future",
         "Wallets": [
             {
                 "Name": "Wallet1",
-                "Stake": 50,
+                "Stake": 80,
                 "Online": true
             },
             {
                 "Name": "Wallet2",
-                "Stake": 50,
+                "Stake": 20,
                 "Online": true
             }
         ]
     },
     "Nodes": [
         {
-            "Name": "Primary",
+            "Name": "primary",
             "IsRelay": true,
             "Wallets": [
                 {
