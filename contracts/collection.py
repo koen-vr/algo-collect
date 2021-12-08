@@ -4,8 +4,8 @@ from utility import *
 # Demo's a collection manager for NFT's (ASA)
 # The collection is a list of unique IDs assigned to the NFTs.
 # The manager tracks free IDs and specific NFTs store their ID in 
-# the 'unitname' parameter. The creation of an asset and reservation
-# of an ID is wrapped in an atomic transaction to make a secure link.
+# the 'unitname' parameter. The creation of an asset and the ID 
+# reservation is wrapped in an atomic transaction to make a link.
 def approval_program():
     
     # Index in to the global array
@@ -49,8 +49,7 @@ def approval_program():
         )
     )
 
-    # TODO Swap scripts out with golang or nodejs
-    # - Goal has no asset creation without managers
+    # Validate the asset creation
     is_valid_asset = And(
         # Creation of an asset has id 0
         Gtxn[0].config_asset() == Int(0),

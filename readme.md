@@ -2,6 +2,8 @@
 
 Demo's a collection manager for NFT's represented by an ASA.
 
+This demo stores private keys in plain text and should not be used in production.
+
 This project **hasn't been security audited** and should not be used in a production environment.
 
 ## Brief
@@ -25,6 +27,13 @@ python3 -m pip install -r requirements.txt
 ## Usage
 
 TODO: Refresh to golang tools
+~~~
+go run ./cmd/collection network start
+go run ./cmd/collection create wallet
+go run ./cmd/collection create app
+go run ./cmd/collection create asset
+go run ./cmd/collection network stop
+~~~
 
 ## Credits
 

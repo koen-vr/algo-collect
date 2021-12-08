@@ -1,4 +1,4 @@
-package client
+package network
 
 import (
 	"context"
@@ -11,13 +11,17 @@ import (
 	"github.com/algorand/go-algorand-sdk/client/v2/common/models"
 )
 
-func MakeAlgodClient() (*algod.Client, error) {
-	addr, err := getFirstLineFromFile("./net1/Primary/algod.net")
+func MakeClient() (*algod.Client, error) {
+	addr, err := getFirstLineFromFile(fmt.Sprintf(
+		"%s/algod.net", nodePath,
+	))
 	if err != nil {
 		return nil, fmt.Errorf("read network file: %v", err)
 	}
 
-	token, err := getFirstLineFromFile("./net1/Primary/algod.token")
+	token, err := getFirstLineFromFile(fmt.Sprintf(
+		"%s/algod.token", nodePath,
+	))
 	if err != nil {
 		return nil, fmt.Errorf("read token file: %v", err)
 	}
@@ -39,23 +43,19 @@ func WaitForConfirmation(c *algod.Client, txid string, waitRounds uint64, ctx co
 			err = fmt.Errorf("wait for transaction id %s timed out", txid)
 			return
 		}
-
 		txInfo, _, err = c.PendingTransactionInformation(txid).Do(ctx, headers...)
 		if err != nil {
 			return
 		}
-
 		// The transaction has been confirmed
 		if txInfo.ConfirmedRound > 0 {
 			return
 		}
-
 		// Wait until the block for the `currentRound` is confirmed
 		response, err = c.StatusAfterBlock(currentRound).Do(ctx, headers...)
 		if err != nil {
 			return
 		}
-
 		// Increment the `currentRound`
 		currentRound += 1
 	}

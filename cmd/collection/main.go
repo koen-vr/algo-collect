@@ -22,11 +22,8 @@ var rootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.AddCommand(cmd.Create)
 	rootCmd.AddCommand(cmd.Network)
-
-	rootCmd.AddCommand(cmd.CreateappCmd)
-	rootCmd.AddCommand(cmd.CreateAssetCmd)
-	rootCmd.AddCommand(cmd.CreateWalletCmd)
 }
 
 func initConfig() {

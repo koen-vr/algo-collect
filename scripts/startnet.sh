@@ -9,5 +9,5 @@ echo
 echo "### Checking node status"
 goal network status -r ../net1
 echo "### Importing root keys"
-NODEKEY=$(goal account list -d ../net1/Primary |  awk '{print $2}')
+NODEKEY=$(goal account list -d ../net1/primary |  awk '{print $2}')
 echo "Imported ${NODEKEY}"

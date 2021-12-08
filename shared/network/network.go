@@ -21,9 +21,9 @@ type Config struct {
 func Create() error {
 	fmt.Println("### Creating private network")
 
-	out, err := exec.List([]string{
-		"-c", "goal network create -n tn50e -t ./network.json -r ./net1",
-	})
+	out, err := exec.List([]string{"-c", fmt.Sprintf(
+		"goal network create -n tn50e -t ./network.json -r %s", netPath,
+	)})
 	if len(out) > 0 {
 		fmt.Println()
 		fmt.Println(out)
@@ -36,7 +36,9 @@ func Create() error {
 	// TODO: Fix this hack, the config struct is hacky
 
 	cfg := Config{}
-	file, err := ioutil.ReadFile("./net1/primary/config.json")
+	file, err := ioutil.ReadFile(fmt.Sprintf(
+		"%s/config.json", nodePath,
+	))
 	json.Unmarshal(file, &cfg)
 	if nil != err {
 		return err
@@ -44,11 +46,17 @@ func Create() error {
 	cfg.EnableDeveloperAPI = true
 
 	jsonString, _ := json.Marshal(cfg)
-	ioutil.WriteFile("./net1/primary/config.json", jsonString, os.ModePerm)
 
-	out, err = exec.List([]string{
-		"-c", "goal network start -r ./net1",
-	})
+	if ioutil.WriteFile(fmt.Sprintf(
+		"%s/config.json", nodePath,
+	), jsonString, os.ModePerm); nil != err {
+		return err
+	}
+	// Start the network
+
+	out, err = exec.List([]string{"-c", fmt.Sprintf(
+		"goal network start -r %s", netPath,
+	)})
 	if len(out) > 0 {
 		fmt.Println()
 		fmt.Println(out)
@@ -57,11 +65,9 @@ func Create() error {
 		return err
 	}
 
-	// Start the network
-
-	out, err = exec.List([]string{
-		"-c", "goal network status -r ./net1",
-	})
+	out, err = exec.List([]string{"-c", fmt.Sprintf(
+		"goal network status -r %s", netPath,
+	)})
 	if len(out) > 0 {
 		fmt.Println()
 		fmt.Println(out)
@@ -76,9 +82,9 @@ func Create() error {
 func Destroy() error {
 	fmt.Println("### Destroying private network")
 
-	out, err := exec.List([]string{
-		"-c", "goal network stop -r ./net1",
-	})
+	out, err := exec.List([]string{"-c", fmt.Sprintf(
+		"goal network stop -r %s", netPath,
+	)})
 	if len(out) > 0 {
 		fmt.Println()
 		fmt.Println(out)
@@ -87,9 +93,9 @@ func Destroy() error {
 		return err
 	}
 
-	out, err = exec.List([]string{
-		"-c", "goal network delete -r ./net1",
-	})
+	out, err = exec.List([]string{"-c", fmt.Sprintf(
+		"goal network delete -r %s", netPath,
+	)})
 	if len(out) > 0 {
 		fmt.Println()
 		fmt.Println(out)
