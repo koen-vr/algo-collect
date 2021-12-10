@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/vecno-io/algo-collection/cmd/collection/cmd"
+	"github.com/koen-vr/algo-collect/cmd/devops/cmd"
 )
 
 var (
@@ -24,21 +24,23 @@ func init() {
 
 	rootCmd.AddCommand(cmd.Create)
 	rootCmd.AddCommand(cmd.Network)
+
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.algo-cfg)")
 }
 
 func initConfig() {
 	if cfgFile != "" {
-		// Use config file from the flag.
+		// Use config file from the flag
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
+		// Find home directory
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".cobra" (without extension).
+		// Search config in home directory with name ".algo-cfg"
 		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".algo-collection")
+		viper.SetConfigType("json")
+		viper.SetConfigName(".algo-cfg")
 	}
 
 	viper.AutomaticEnv()

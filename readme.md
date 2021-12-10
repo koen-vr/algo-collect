@@ -1,4 +1,4 @@
-# algo-collection
+# algo-collect
 
 Demo's a collection manager for NFT's represented by an ASA.
 
@@ -12,14 +12,15 @@ The collection is a list of unique IDs assigned to the NFTs. The manager tracks 
 
 ## Requirements
 
-* Linux or macOS
-* Golang version 1.17.0 or higher
-* Python 3. The scripts assumes the Python executable is called `python3`.
-* The [Algorand Node software](https://developer.algorand.org/docs/run-a-node/setup/install/). A private network is used, hence there is no need to sync up MainNet or TestNet. `goal` is assumed to be in the PATH.
+- Linux or macOS
+- Golang version 1.17.0 or higher
+- Python 3. The scripts assumes the Python executable is called `python3`.
+- The [Algorand Node software](https://developer.algorand.org/docs/run-a-node/setup/install/). A private network is used, hence there is no need to sync up MainNet or TestNet. `goal` is assumed to be in the PATH.
 
 ## Setup
 
-To install all required packages, run: 
+To install all required packages, run:
+
 ```bash
 python3 -m pip install -r requirements.txt
 ```
@@ -27,13 +28,14 @@ python3 -m pip install -r requirements.txt
 ## Usage
 
 TODO: Refresh to golang tools
-~~~
+
+```
 go run ./cmd/collection network start
 go run ./cmd/collection create wallet
 go run ./cmd/collection create app
 go run ./cmd/collection create asset
 go run ./cmd/collection network stop
-~~~
+```
 
 ## Credits
 

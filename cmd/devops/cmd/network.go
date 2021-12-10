@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/vecno-io/algo-collection/shared/network"
+	"github.com/koen-vr/algo-collect/shared/network"
 )
 
 func init() {

@@ -11,10 +11,10 @@ import (
 	"github.com/algorand/go-algorand-sdk/logic"
 	"github.com/algorand/go-algorand-sdk/types"
 
-	"github.com/vecno-io/algo-collection/shared/account"
+	"github.com/koen-vr/algo-collect/shared/account"
 
-	exec "github.com/vecno-io/algo-collection/shared/execute"
-	net "github.com/vecno-io/algo-collection/shared/network"
+	exec "github.com/koen-vr/algo-collect/shared/execute"
+	net "github.com/koen-vr/algo-collect/shared/network"
 )
 
 func Deploy() error {

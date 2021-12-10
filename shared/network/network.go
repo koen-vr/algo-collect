@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	exec "github.com/vecno-io/algo-collection/shared/execute"
+	exec "github.com/koen-vr/algo-collect/shared/execute"
 )
 
 type Config struct {

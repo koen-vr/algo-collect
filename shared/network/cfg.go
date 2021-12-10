@@ -1,6 +1,6 @@
 package network
 
-const netPath = "./netstats"
+const netPath = "./net-data"
 
 // nodePath This needs to match the name of
 // the node as found in the network.json file

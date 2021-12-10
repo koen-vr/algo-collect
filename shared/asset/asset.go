@@ -8,11 +8,11 @@ import (
 	"github.com/algorand/go-algorand-sdk/future"
 	"github.com/algorand/go-algorand-sdk/types"
 
-	"github.com/vecno-io/algo-collection/shared/account"
-	"github.com/vecno-io/algo-collection/shared/contract"
+	"github.com/koen-vr/algo-collect/shared/account"
+	"github.com/koen-vr/algo-collect/shared/contract"
 
-	exec "github.com/vecno-io/algo-collection/shared/execute"
-	net "github.com/vecno-io/algo-collection/shared/network"
+	exec "github.com/koen-vr/algo-collect/shared/execute"
+	net "github.com/koen-vr/algo-collect/shared/network"
 )
 
 func Setup() error {

@@ -6,9 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/vecno-io/algo-collection/shared/account"
-	"github.com/vecno-io/algo-collection/shared/asset"
-	"github.com/vecno-io/algo-collection/shared/contract"
+	"github.com/koen-vr/algo-collect/shared/account"
+	"github.com/koen-vr/algo-collect/shared/asset"
+	"github.com/koen-vr/algo-collect/shared/contract"
 )
 
 func init() {
