@@ -15,7 +15,7 @@ The collection is a list of unique IDs assigned to the NFTs. The manager tracks 
 - Linux or macOS
 - Golang version 1.17.0 or higher
 - Python 3. The scripts assumes the Python executable is called `python3`.
-- The [Algorand Node software](https://developer.algorand.org/docs/run-a-node/setup/install/). A private network is used, hence there is no need to sync up MainNet or TestNet. `goal` is assumed to be in the PATH.
+- The [Algorand Node software](https://developer.algorand.org/docs/run-a-node/setup/install/)- A private network is used, hence there is no need to sync up MainNet or TestNet. `goal` is assumed to be in the PATH.
 
 ## Setup
 
@@ -27,14 +27,12 @@ python3 -m pip install -r requirements.txt
 
 ## Usage
 
-TODO: Refresh to golang tools
-
 ```
-go run ./cmd/collection network start
-go run ./cmd/collection create wallet
-go run ./cmd/collection create app
-go run ./cmd/collection create asset
-go run ./cmd/collection network stop
+go run ./cmd/devops network start
+go run ./cmd/devops create wallet
+go run ./cmd/devops create app
+go run ./cmd/devops create asset
+go run ./cmd/devops network stop
 ```
 
 ## Credits
