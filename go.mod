@@ -2,6 +2,11 @@ module github.com/koen-vr/algo-collect
 
 go 1.17
 
+require github.com/vecno-io/go-pyteal v0.0.0
+
+// TODO Remove the  temorary local import path once published
+replace github.com/vecno-io/go-pyteal v0.0.0 => ../../vecno-io/go-pyteal
+
 require (
 	github.com/algorand/go-algorand-sdk v1.11.0
 	github.com/spf13/viper v1.8.1
