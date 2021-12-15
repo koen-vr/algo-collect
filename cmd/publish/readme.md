@@ -40,20 +40,32 @@ chmod 544 update.sh
 
 ## Usage
 
-Most steps are split in to two parts, one where all data is prepaird and verified and then a second step to publish the data on to the target network. Seems reduent but it is safer and easier to catch and correct issues before things are put on to the blockchain.
-
-> 1. Start and stop the network node
+Network managment. Suported types: devnet, testnet, mainnet
 
 ```
-go run ./cmd/publish network start testnet
-go run ./cmd/publish network stop
+go run ./cmd/publish network -n <network type> create
+go run ./cmd/publish network -n <network type> start
+go run ./cmd/publish network -n <network type> status
+go run ./cmd/publish network -n <network type> stop
+go run ./cmd/publish network -n <network type> destroy
+```
+
+## Usage Routines
+
+Most steps are split in to two parts, one where all data is prepaird and verified and then a second step to publish the data on to the target network. Seems reduent but it is safer and easier to catch and correct issues before things are put on to the blockchain.
+
+> 1. Create and start a network node
+
+```
+go run ./cmd/publish network -n devnet create
+go run ./cmd/publish network -n devnet start
 ```
 
 > 2. Verify and deploy the collectors contract
 
 ```
-go run ./cmd/publish deploy build
-go run ./cmd/publish deploy publish
+go run ./cmd/publish deploy -n devnet build
+go run ./cmd/publish deploy -n devnet publish
 ```
 
 > 3. Verify and publish the image files

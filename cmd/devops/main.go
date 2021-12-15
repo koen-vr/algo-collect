@@ -15,8 +15,8 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "main",
-	Short: "Run development and test utilities",
+	Use:   "publish",
+	Short: "Publication tool for algo-collet",
 }
 
 func init() {
