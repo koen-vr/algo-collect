@@ -1,40 +1,19 @@
 package command
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	cfg "github.com/vecno-io/go-pyteal/config"
 )
 
-var (
-	NetTarget string
-)
+var setup = cfg.Setup{}
 
-func getNetConfig() cfg.Network {
-	path, err := os.UserHomeDir()
-	cobra.CheckErr(err)
-
-	c := cfg.Network{}
-	c.NodePath = fmt.Sprintf("%s/node", path)
-
-	switch NetTarget {
-	case "devnet":
-		c.Type = cfg.Devnet
-		c.DataPath = fmt.Sprintf("%s/node/devnet-data", path)
-	case "testnet":
-		c.Type = cfg.Testnet
-		c.DataPath = fmt.Sprintf("%s/node/testnet-data", path)
-	case "mainnet":
-		c.Type = cfg.Mainnet
-		c.DataPath = fmt.Sprintf("%s/node/mainnet-data", path)
-	default:
-		err := fmt.Errorf("get config: unknown target: %s", NetTarget)
-		fmt.Fprintln(os.Stderr, "error: "+err.Error())
-		os.Exit(1)
+func onInitialize(validate bool) error {
+	if err := viper.Unmarshal(&setup); nil != err {
+		return err
 	}
-
-	return c
+	if err := cfg.OnInitialize(setup, validate); nil != err {
+		return err
+	}
+	return nil
 }

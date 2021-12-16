@@ -10,17 +10,9 @@ import (
 	"github.com/koen-vr/algo-collect/cmd/publish/command"
 )
 
-var (
-	cfgFile string
-)
-
-type Config struct {
-	DataPath string `mapstructure:"ALGORAND_DATA"`
-}
-
 var rootCmd = &cobra.Command{
-	Use:   "main",
-	Short: "Run development and test utilities",
+	Use:   "publisher",
+	Short: "A utility to aid with publishing ARC3 Collections to the Algorand network.",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if _, err := os.Stat("./contracts"); err != nil {
 			fmt.Fprintln(os.Stderr, "contracts folder not available")
@@ -34,29 +26,23 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(onInitialize)
 
+	rootCmd.AddCommand(command.Account)
 	rootCmd.AddCommand(command.Network)
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./.env)")
 }
 
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Look for .env file
-		viper.AddConfigPath(".")
-		viper.SetConfigType("env")
-		viper.SetConfigName(".env")
-	}
+func onInitialize() {
+	viper.SetConfigName(".env")
+	viper.SetConfigType("env")
+	viper.AddConfigPath("./")
 
+	viper.SetEnvPrefix("algorand")
+	viper.BindEnv("node")
+	viper.BindEnv("data")
+
+	viper.ReadInConfig()
 	viper.AutomaticEnv()
-	// Override loaded environment variables
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 }
 
 func main() {

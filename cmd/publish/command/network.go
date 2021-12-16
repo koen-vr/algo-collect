@@ -16,9 +16,6 @@ func init() {
 
 	Network.AddCommand(networkCreateCmd)
 	Network.AddCommand(networkDestroyCmd)
-
-	Network.PersistentFlags().StringVarP(&NetTarget, "net", "n", "devnet", "network type: devnet, testnet or mainnet (required)")
-	Network.MarkPersistentFlagRequired("net")
 }
 
 var Network = &cobra.Command{
@@ -36,7 +33,13 @@ var networkStartCmd = &cobra.Command{
 	Short: "starts the network node",
 	Long:  `Start the local network node.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := net.Start(getNetConfig()); err != nil {
+		if err := net.Start(); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(true); err != nil {
 			fmt.Fprintln(os.Stderr, "error: "+err.Error())
 			os.Exit(1)
 		}
@@ -48,7 +51,13 @@ var networkStopCmd = &cobra.Command{
 	Short: "stops the network node",
 	Long:  `Stop the local network node.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := net.Stop(getNetConfig()); err != nil {
+		if err := net.Stop(); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(true); err != nil {
 			fmt.Fprintln(os.Stderr, "error: "+err.Error())
 			os.Exit(1)
 		}
@@ -60,7 +69,13 @@ var networkStatusCmd = &cobra.Command{
 	Short: "get the network status",
 	Long:  `Shows the current network status.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := net.Status(getNetConfig()); err != nil {
+		if err := net.Status(); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(true); err != nil {
 			fmt.Fprintln(os.Stderr, "error: "+err.Error())
 			os.Exit(1)
 		}
@@ -72,7 +87,13 @@ var networkCreateCmd = &cobra.Command{
 	Short: "creates a network node",
 	Long:  `Create and setup a local network node.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := net.Create(getNetConfig()); err != nil {
+		if err := net.Create(); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(false); err != nil {
 			fmt.Fprintln(os.Stderr, "error: "+err.Error())
 			os.Exit(1)
 		}
@@ -84,7 +105,13 @@ var networkDestroyCmd = &cobra.Command{
 	Short: "destroys a network node",
 	Long:  `Destroy a local network node and clean up.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := net.Destroy(getNetConfig()); err != nil {
+		if err := net.Destroy(); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(true); err != nil {
 			fmt.Fprintln(os.Stderr, "error: "+err.Error())
 			os.Exit(1)
 		}
