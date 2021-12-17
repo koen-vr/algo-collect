@@ -88,11 +88,11 @@ go run ./cmd/publish deploy build
 go run ./cmd/publish deploy publish
 ```
 
-> 4. Verify and publish the image files
+> 4. Publish the image files and get IPFS hashes
+>    **ToDo: Varify images: download and check hashes**
 
 ```
-go run ./cmd/publish image build
-go run ./cmd/publish image publish
+go run ./cmd/publish pinata images
 ```
 
 > 5. Verify and publish the metadata files
