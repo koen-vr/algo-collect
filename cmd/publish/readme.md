@@ -53,7 +53,8 @@ go run ./cmd/publish network stop
 Wallet managment
 
 ```
-go run ./cmd/publish account create
+go run ./cmd/publish account info (--name my-account)
+go run ./cmd/publish account create (--name my-account)
 ```
 
 ## Usage Routines
@@ -74,28 +75,34 @@ go run ./cmd/publish network create
 go run ./cmd/publish network start
 ```
 
-> 2. Verify and deploy the collectors contract
+> 2. Create the manager account
+
+```
+go run ./cmd/publish account create -n manager
+```
+
+> 3. Verify and deploy the collectors contract
 
 ```
 go run ./cmd/publish deploy build
 go run ./cmd/publish deploy publish
 ```
 
-> 3. Verify and publish the image files
+> 4. Verify and publish the image files
 
 ```
 go run ./cmd/publish image build
 go run ./cmd/publish image publish
 ```
 
-> 4. Verify and publish the metadata files
+> 5. Verify and publish the metadata files
 
 ```
 go run ./cmd/publish meta build
 go run ./cmd/publish meta publish
 ```
 
-> 5. Verify transaction and mint the nfts
+> 6. Verify transaction and mint the nfts
 
 ```
 go run ./cmd/publish nft setup
