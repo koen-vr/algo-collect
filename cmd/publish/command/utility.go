@@ -1,6 +1,12 @@
 package command
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/spf13/viper"
 
 	cfg "github.com/vecno-io/go-pyteal/config"
@@ -16,4 +22,50 @@ func onInitialize(validate bool) error {
 		return err
 	}
 	return nil
+}
+
+func getListOfFiles(ext, path string) ([]string, error) {
+	list := make([]string, 0)
+	info, err := os.Stat(path)
+	if nil != err {
+		return list[:], fmt.Errorf("get file list: %s", err)
+	}
+	if !info.IsDir() {
+		return list[:], fmt.Errorf("get file list:: not a direcotry: %s", path)
+	}
+
+	if err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			return nil
+		}
+		if filepath.Ext(path) == ext {
+			list = append(list, path)
+		}
+		return nil
+	}); err != nil {
+		return list[:], fmt.Errorf("get file list: walk tree: %s", err)
+	}
+
+	return list[:], nil
+}
+
+func getUnitName(nr uint32) string {
+	str := fmt.Sprintf("%%s#%%0%dd", len(viper.GetString("META_COLLECT_MASK")))
+	return fmt.Sprintf(str, viper.GetString("META_COLLECT_TAG"), nr)
+}
+
+func getapplicationId(name string) (string, error) {
+	id, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.id", viper.GetString("ASSETS"), name))
+	if err != nil {
+		return "", err
+	}
+	return strings.Split(string(id), "\n")[0], nil
+}
+
+func getapplicationUrl(name string) (string, error) {
+	id, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.url", viper.GetString("ASSETS"), name))
+	if err != nil {
+		return "", err
+	}
+	return strings.Split(string(id), "\n")[0], nil
 }
