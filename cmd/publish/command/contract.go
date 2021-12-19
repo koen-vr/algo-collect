@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/algorand/go-algorand-sdk/types"
 	"github.com/spf13/cobra"
@@ -35,12 +36,23 @@ var contractMetaCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		path := fmt.Sprintf("%s/collection.pin", viper.GetString("DATA"))
-		fmt.Println(":: Building contract meta data:", path)
-		if err := metaBuildfContract(viper.GetString("DATA"), path); nil != err {
-			fmt.Printf(">> Error: \n>>>> %s\n", err)
+		data := viper.GetString("DATA")
+		path := fmt.Sprintf("%s/collection.pin", data)
+
+		_, file := filepath.Split(path)
+		file = file[:len(file)-4] + ".json"
+
+		fmt.Printf(":: Building contract meta data: %s", path)
+		if err := metaBuildContract(data, file, path); nil != err {
+			fmt.Printf(" >> Error: \n>>>> %s\n", err)
 		} else {
-			fmt.Println(">> Ok")
+			fmt.Println(" >> Ok")
+		}
+		fmt.Printf(":: Publish contract meta data: %s/%s", data, file)
+		if err := metaPushContract(data, file); nil != err {
+			fmt.Printf(" >> Error: \n>>>> %s\n", err)
+		} else {
+			fmt.Println(" >> Ok")
 		}
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {

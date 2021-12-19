@@ -57,6 +57,12 @@ go run ./cmd/publish account info (--name my-account)
 go run ./cmd/publish account create (--name my-account)
 ```
 
+Test pinata api keys
+
+```
+go run ./cmd/publish asset
+```
+
 ## Usage Routines
 
 Most steps are split in to two parts, one where all data is prepaird and verified and then a second step to publish the data on to the target network. Seems reduent but it is safer and easier to catch and correct issues before things are put on to the blockchain.
@@ -77,7 +83,9 @@ go run ./cmd/publish network create
 go run ./cmd/publish network start
 ```
 
-> 2. Create the manager account
+> 2. Create and setup the manager account.
+>    - using info to check on acount balance
+>    - on a `devnet` node it funds the acocunt
 
 ```
 go run ./cmd/publish account create
@@ -98,26 +106,22 @@ go run ./cmd/publish contract image
 go run ./cmd/publish contract meta
 ```
 
-> 4. Setup the ASA Data for the assets
+> 5. Setup the ASA Data for the assets
 
 ```
-go run ./cmd/publish pinata images
-go run ./cmd/publish meta build
+go run ./cmd/publish assets image
+go run ./cmd/publish assets meta
 ```
 
-**=== TODO NEXT ===**
-
-> 6. Upload and pin meta-data files
-
-```
-go run ./cmd/publish meta publish
-```
+=============
+**TODO Next**
+=============
 
 > 6. Verify transaction and mint the nfts
 
 ```
-go run ./cmd/publish nft setup
-go run ./cmd/publish nft publish
+go run ./cmd/publish asa setup
+go run ./cmd/publish asa push
 ```
 
 **TODO: Distrebute NFTs to address list**

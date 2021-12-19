@@ -16,8 +16,8 @@ import (
 )
 
 func init() {
-	//Pinata.AddCommand(pinataDataCmd)
-	Pinata.AddCommand(pinataImageCmd)
+	Assets.AddCommand(assetsMetaCmd)
+	Assets.AddCommand(assetsImageCmd)
 }
 
 type PinFileResponse struct {
@@ -30,8 +30,8 @@ type PinTestResponse struct {
 	Message string `json:"message"`
 }
 
-var Pinata = &cobra.Command{
-	Use:   "pinata",
+var Assets = &cobra.Command{
+	Use:   "assets",
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -67,16 +67,43 @@ var Pinata = &cobra.Command{
 
 		cmd.HelpFunc()(cmd, args)
 	},
-	PreRun: func(cmd *cobra.Command, args []string) {
-		if err := onInitialize(true); err != nil {
+}
+
+var assetsMetaCmd = &cobra.Command{
+	Use:   "meta",
+	Short: "",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		root := fmt.Sprintf("%s/images", viper.GetString("DATA"))
+		fmt.Println(":: Building meta data for:", root)
+
+		list, err := getListOfFiles(".pin", root)
+		if err != nil {
 			fmt.Fprintln(os.Stderr, "error: "+err.Error())
 			os.Exit(1)
+		}
+
+		fmt.Printf(">> Found %d assets to build metadata for.\n", len(list))
+		for idx, path := range list {
+			fmt.Printf(">> Build > %s.json ", path[:len(path)-4])
+			if err := metaBuildData(root, path, uint32(idx+1)); nil != err {
+				fmt.Printf(">> Error: \n>>>> %s\n", err)
+			} else {
+				fmt.Println(">> Ok")
+			}
+			// TODO Push Meta to ipfs
+			fmt.Printf(">> Push > %s.json ", path[:len(path)-4])
+			if err := metaPushData(root, path); nil != err {
+				fmt.Printf(">> Error: \n>>>> %s\n", err)
+			} else {
+				fmt.Println(">> Ok")
+			}
 		}
 	},
 }
 
-var pinataImageCmd = &cobra.Command{
-	Use:   "images",
+var assetsImageCmd = &cobra.Command{
+	Use:   "image",
 	Short: "upload all images to pinata",
 	Long:  `Uploads all images to the pinata server and stores the ipfs hashes to disk.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -104,8 +131,6 @@ var pinataImageCmd = &cobra.Command{
 }
 
 func imageUploadPin(url, path string) error {
-	client := &http.Client{}
-
 	file, err := os.Open(path)
 	if err != nil {
 		return err
@@ -129,6 +154,7 @@ func imageUploadPin(url, path string) error {
 	req.Header.Set("pinata_api_key", viper.GetString("PINATA_KEY"))
 	req.Header.Set("pinata_secret_api_key", viper.GetString("PINATA_SEC"))
 
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -145,18 +171,16 @@ func imageUploadPin(url, path string) error {
 		return fmt.Errorf("invalid hash returned")
 	}
 
-	// Note: clean up the json output for humans
+	// Note: cleans up the json output for humans
 	body, err = json.MarshalIndent(pin, "", "  ")
 	if err != nil {
 		return err
 	}
-
 	out, err := os.Create(fmt.Sprintf("%s.pin", path[:len(path)-4]))
 	if err != nil {
 		return err
 	}
 	defer out.Close()
-
 	if _, err := out.Write(body); nil != err {
 		return err
 	}

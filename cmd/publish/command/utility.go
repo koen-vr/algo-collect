@@ -1,6 +1,7 @@
 package command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -50,7 +51,7 @@ func getListOfFiles(ext, path string) ([]string, error) {
 }
 
 func getUnitName(nr uint32) string {
-	str := fmt.Sprintf("%%s#%%0%dd", len(viper.GetString("META_COLLECT_MASK")))
+	str := fmt.Sprintf("%%s#%%0%dd", len(viper.GetString("META_COLLECT_MAXCOUNT")))
 	return fmt.Sprintf(str, viper.GetString("META_COLLECT_TAG"), nr)
 }
 
@@ -63,9 +64,13 @@ func getApplicationId(name string) (string, error) {
 }
 
 func getApplicationUrl(name string) (string, error) {
-	id, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.url", viper.GetString("DATA"), name))
+	data, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.json.pin", viper.GetString("DATA"), name))
 	if err != nil {
 		return "", err
 	}
-	return strings.Split(string(id), "\n")[0], nil
+	pin := PinFileResponse{}
+	if err := json.Unmarshal(data, &pin); nil != err {
+		return "", err
+	}
+	return fmt.Sprintf("ipfs://%s", pin.IpfsHash), nil
 }

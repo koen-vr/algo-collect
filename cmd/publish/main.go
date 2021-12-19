@@ -28,8 +28,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(onInitialize)
 
-	rootCmd.AddCommand(command.Meta)
-	rootCmd.AddCommand(command.Pinata)
+	rootCmd.AddCommand(command.Assets)
 	rootCmd.AddCommand(command.Contract)
 
 	rootCmd.AddCommand(command.Account)
