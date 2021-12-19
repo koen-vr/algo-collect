@@ -54,16 +54,16 @@ func getUnitName(nr uint32) string {
 	return fmt.Sprintf(str, viper.GetString("META_COLLECT_TAG"), nr)
 }
 
-func getapplicationId(name string) (string, error) {
-	id, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.id", viper.GetString("ASSETS"), name))
+func getApplicationId(name string) (string, error) {
+	id, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.id", viper.GetString("DATA"), name))
 	if err != nil {
 		return "", err
 	}
 	return strings.Split(string(id), "\n")[0], nil
 }
 
-func getapplicationUrl(name string) (string, error) {
-	id, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.url", viper.GetString("ASSETS"), name))
+func getApplicationUrl(name string) (string, error) {
+	id, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.url", viper.GetString("DATA"), name))
 	if err != nil {
 		return "", err
 	}

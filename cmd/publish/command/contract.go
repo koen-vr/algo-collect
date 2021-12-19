@@ -13,6 +13,9 @@ import (
 )
 
 func init() {
+	Contract.AddCommand(contractMetaCmd)
+	Contract.AddCommand(contractImageCmd)
+
 	Contract.AddCommand(contractBuildCmd)
 	Contract.AddCommand(contractDeployCmd)
 }
@@ -24,6 +27,52 @@ var Contract = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// No args passed, fallback to help
 		cmd.HelpFunc()(cmd, args)
+	},
+}
+
+var contractMetaCmd = &cobra.Command{
+	Use:   "meta",
+	Short: "",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		path := fmt.Sprintf("%s/collection.pin", viper.GetString("DATA"))
+		fmt.Println(":: Building contract meta data:", path)
+		if err := metaBuildfContract(viper.GetString("DATA"), path); nil != err {
+			fmt.Printf(">> Error: \n>>>> %s\n", err)
+		} else {
+			fmt.Println(">> Ok")
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(true); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+	},
+}
+
+var contractImageCmd = &cobra.Command{
+	Use:   "image",
+	Short: "",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		const url = "https://api.pinata.cloud/pinning/pinFileToIPFS"
+
+		// TODO Fix Hard coded value
+		path := fmt.Sprintf("%s/collection.png", viper.GetString("DATA"))
+		fmt.Println(":: Upload collection image to pinata:", path)
+
+		if err := imageUploadPin(url, path); nil != err {
+			fmt.Printf(">> Err: %s\n", err)
+		} else {
+			fmt.Println(">> Ok")
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(true); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
 	},
 }
 

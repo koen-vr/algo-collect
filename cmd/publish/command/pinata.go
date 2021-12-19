@@ -151,7 +151,7 @@ func imageUploadPin(url, path string) error {
 		return err
 	}
 
-	out, err := os.Create(fmt.Sprintf("%s.json", path[:len(path)-4]))
+	out, err := os.Create(fmt.Sprintf("%s.pin", path[:len(path)-4]))
 	if err != nil {
 		return err
 	}
