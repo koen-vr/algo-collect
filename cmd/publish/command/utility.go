@@ -122,7 +122,7 @@ func txnBuild(app uint64, file string, acc crypto.Account, params types.Suggeste
 	if nil != err {
 		return 0, fmt.Errorf("send raw txn:  %s", err)
 	}
-	fmt.Println("Asset:", txInfo.AssetIndex)
+	fmt.Printf(">> Asset > %d ", txInfo.AssetIndex)
 
 	return txInfo.AssetIndex, nil
 }

@@ -39,7 +39,7 @@ def get_asset_unit_name(arg):
     num = ScratchVar(TealType.uint64)
 
     return Seq([
-        out.store(Bytes("#")),
+        out.store(Bytes("Nr#")),
         tmp.store(uint_to_bytes(arg)),
         For(num.store(Int(5) - Len(tmp.load())), num.load() > Int(0), num.store(num.load() - Int(1))).Do(
             out.store(Concat(
