@@ -92,11 +92,11 @@ go run ./cmd/publish account create
 go run ./cmd/publish account info
 ```
 
-> 3. Build and deploy the collection contract
+> 3. Build and push the collection contract
 
 ```
 go run ./cmd/publish contract build
-go run ./cmd/publish contract deploy
+go run ./cmd/publish contract push
 ```
 
 > 4. Setup the ASA Data for the contract
@@ -113,15 +113,10 @@ go run ./cmd/publish assets image
 go run ./cmd/publish assets meta
 ```
 
-=============
-**TODO Next**
-=============
-
-> 6. Verify transaction and mint the nfts
+> 6. Build transactions and mint assets
 
 ```
-go run ./cmd/publish asa setup
-go run ./cmd/publish asa push
+go run ./cmd/publish assets mint
 ```
 
 **TODO: Distrebute NFTs to address list**

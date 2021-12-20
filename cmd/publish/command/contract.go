@@ -18,7 +18,7 @@ func init() {
 	Contract.AddCommand(contractImageCmd)
 
 	Contract.AddCommand(contractBuildCmd)
-	Contract.AddCommand(contractDeployCmd)
+	Contract.AddCommand(contractPushCmd)
 }
 
 var Contract = &cobra.Command{
@@ -109,8 +109,8 @@ var contractBuildCmd = &cobra.Command{
 	},
 }
 
-var contractDeployCmd = &cobra.Command{
-	Use:   "deploy",
+var contractPushCmd = &cobra.Command{
+	Use:   "push",
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {

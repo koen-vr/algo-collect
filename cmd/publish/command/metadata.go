@@ -53,21 +53,20 @@ type SAAsset struct {
 type SACollection struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	AsaMax   string `json:"asamax"`
-	AsaMask  string `json:"asamask"`
 	Metadata string `json:"metadata"`
 }
 
-func getPinData(path string) (PinFileResponse, error) {
-	res := PinFileResponse{}
-	data, err := os.ReadFile(path)
+func hashAsaFile(path string) ([]byte, error) {
+	hash := sha256.New()
+	data, err := os.Open(path)
 	if err != nil {
-		return res, err
+		return []byte{}, err
 	}
-	if err = json.Unmarshal(data, &res); err != nil {
-		return PinFileResponse{}, err
+	defer data.Close()
+	if _, err := io.Copy(hash, data); err != nil {
+		return []byte{}, err
 	}
-	return res, nil
+	return hash.Sum(nil), nil
 }
 
 func hashImageFile(path string) (string, error) {
@@ -119,16 +118,9 @@ func metaBuildData(dest, path string, idx uint32) error {
 		Image_mimetype:  "image/png",
 
 		Properties: SAAsset{
-			// Traits: SATraits{
-			// 	"background": "purple",
-			// },
-			// Attributes: SAAttributes{
-			// },
 			Collection: SACollection{
 				ID:       appId,
 				Name:     viper.GetString("META_COLLECT"),
-				AsaMax:   viper.GetString("META_COLLECT_MAXCOUNT"),
-				AsaMask:  getUnitName(0),
 				Metadata: appUrl,
 			},
 		},

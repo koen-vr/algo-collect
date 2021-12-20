@@ -10,12 +10,17 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	acc "github.com/vecno-io/go-pyteal/account"
+	net "github.com/vecno-io/go-pyteal/network"
 )
 
 func init() {
+	Assets.AddCommand(assetsMintCmd)
 	Assets.AddCommand(assetsMetaCmd)
 	Assets.AddCommand(assetsImageCmd)
 }
@@ -83,8 +88,17 @@ var assetsMetaCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Printf(">> Found %d assets to build metadata for.\n", len(list))
-		for idx, path := range list {
+		// filter down img pins
+		pinList := make([]string, 0)
+		for _, path := range list {
+			file := path[:len(path)-4]
+			if filepath.Ext(file) != ".json" {
+				pinList = append(pinList, path)
+			}
+		}
+
+		fmt.Printf(">> Found %d assets to build metadata for.\n", len(pinList))
+		for idx, path := range pinList {
 			fmt.Printf(">> Build > %s.json ", path[:len(path)-4])
 			if err := metaBuildData(root, path, uint32(idx+1)); nil != err {
 				fmt.Printf(">> Error: \n>>>> %s\n", err)
@@ -126,6 +140,88 @@ var assetsImageCmd = &cobra.Command{
 			} else {
 				fmt.Println(">> Ok")
 			}
+		}
+	},
+}
+
+var assetsMintCmd = &cobra.Command{
+	Use:   "mint",
+	Short: "",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
+		root := fmt.Sprintf("%s/images", viper.GetString("DATA"))
+		fmt.Println(":: Build ASA transactions in folder:", root)
+
+		// filter down meta pins
+		list, err := getListOfFiles(".pin", root)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+		pinList := make([]string, 0)
+		for _, path := range list {
+			path = path[:len(path)-4]
+			if filepath.Ext(path) == ".json" {
+				pinList = append(pinList, path)
+			}
+		}
+
+		app, err := getApplicationId("collection")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+		id, err := strconv.ParseUint(app, 10, 64)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+
+		params, err := net.MakeTxnParams()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+		manager, err := acc.Load(viper.GetString("APP_MANAGER"), viper.GetString("PASS"))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+
+		idList := make([]uint64, 0)
+		fmt.Printf(">> Found %d assets to prepair create transactions for.\n", len(pinList))
+		for idx, path := range pinList {
+			fmt.Printf(">> Build > %d > %s \n", idx+1, path)
+			asset, err := txnBuild(id, path, manager, params)
+			if nil != err {
+				fmt.Printf(">> Err: \n>>>> %s\n", err)
+			} else {
+				fmt.Println(">> Ok")
+				idList = append(idList, asset)
+			}
+		}
+
+		// TEMP Just dump the asset id's to a file
+		out, err := json.MarshalIndent(idList, "", "  ")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+		outFile, err := os.Create(fmt.Sprintf("%s/assets.json", viper.GetString("DATA")))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+		defer outFile.Close()
+		if _, err := outFile.Write(out); nil != err {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
+		}
+	},
+	PreRun: func(cmd *cobra.Command, args []string) {
+		if err := onInitialize(true); err != nil {
+			fmt.Fprintln(os.Stderr, "error: "+err.Error())
+			os.Exit(1)
 		}
 	},
 }
