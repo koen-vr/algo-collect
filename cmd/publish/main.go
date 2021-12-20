@@ -13,16 +13,6 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "publisher",
 	Short: "A utility to aid with publishing ARC3 Collections to the Algorand network.",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		if _, err := os.Stat("./contracts"); err != nil {
-			fmt.Fprintln(os.Stderr, "contracts folder not available")
-			os.Exit(1)
-		}
-		if _, err := os.Stat("./network.json"); err != nil {
-			fmt.Fprintln(os.Stderr, "network setup file not available")
-			os.Exit(1)
-		}
-	},
 }
 
 func init() {
@@ -40,7 +30,9 @@ func onInitialize() {
 	viper.SetConfigType("env")
 	viper.AddConfigPath("./")
 
-	viper.SetEnvPrefix("algorand")
+	viper.SetEnvPrefix("algo")
+	viper.BindEnv("type")
+	viper.BindEnv("pass")
 	viper.BindEnv("node")
 	viper.BindEnv("data")
 

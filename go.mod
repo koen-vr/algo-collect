@@ -4,7 +4,7 @@ go 1.17
 
 require github.com/vecno-io/go-pyteal v0.0.0
 
-// TODO Remove the  temorary local import path once published
+// Swap out for local development when working on both modules
 replace github.com/vecno-io/go-pyteal v0.0.0 => ../../vecno-io/go-pyteal
 
 require (

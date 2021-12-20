@@ -23,23 +23,30 @@ Configuration is done through environment variables or a .env file. Copy the .en
 TYPE=[devnet, testnet or mainnet]
 PASS=<a passphrase to encrypt and decrypt account info>
 
-NODE=<path to the Algorand node **>
-DATA=<path to the collections data ***>
+NODE=<path to the Algorand node>
+DATA=<path to the collections data>
 
 APP_PROG=<name of the collection contract>
 APP_CLEAR=<name of the clear state contract>
 APP_MANAGER=<default name for the managing account>
 
 META_COLLECT=<name of the collection>
-META_COLLECT_TAG=<two letter tag as in the app****>
+META_COLLECT_TAG=<two letter tag as in the app>
 META_COLLECT_MAXCOUNT=<Max amount as in the app****>
 
 PINATA_KEY=<your-api-key>
 PINATA_SEC=<your-api-secret>
 ```
 
-** The path to the node needs: - To be writable - Hold the required tools - Hold network genesis files. \*** See below for the required structure and files.
-\*\*\*\* Needs to match the information in the application contract.
+`NODE` The path to the node needs:
+
+- To be writable
+- Hold the required tools
+- Hold network genesis files.
+
+`DATA` See below for the required structure and files.
+
+`META_COLLECT_TAG` Needs to match the information in the application contract.
 
 ### Algorand Node
 
@@ -47,8 +54,11 @@ PINATA_SEC=<your-api-secret>
 
 To interact with the Algorand network the toolchain needs access to a locally installed. The toolchain has been tested with the node software installed using the updater-script. ([algorand-updater-script])
 
-Executables need to be at `./node` (NODE)
-Genesis Files: need to be at `./node/genesisfiles`
+Then copy the netwrok configuration file from the repository to the root of the `./node`.
+
+- Executables need to be at `./node` (NODE)
+- Genesis Files: need to be at `./node/genesisfiles`
+- Network Config: need to be at`./node/network.json`
 
 Depending on the network in the configuration, one folder will be made within `./node` and be named `devnet-data`, `mainnet-data`, or `testnet-data`.
 
@@ -87,15 +97,15 @@ By default, the contract can not handle more than 64512, if you desire to lower 
 Inside collection.py on line 72
 
 ```py
-        # Is smaller then max
-        index.load() < Int(64512),
+    # Is smaller then max
+    index.load() < Int(64512),
 ```
 
 change to
 
 ```py
-        # Is smaller then max
-        index.load() < Int(<META_COLLECT_MAXCOUNT>),
+    # Is smaller then max
+    index.load() < Int(<META_COLLECT_MAXCOUNT>),
 ```
 
 ###### Unit Name validation
@@ -109,18 +119,18 @@ Inside utility.py on line 42
 ```py
 def get_asset_unit_name(arg):
 ...
-        out.store(Bytes("Nr#")),
-        tmp.store(uint_to_bytes(arg)),
-        For(num.store(Int(5) - Len(tmp.load())) ...
+    out.store(Bytes("Nr#")),
+    tmp.store(uint_to_bytes(arg)),
+    For(num.store(Int(5) - Len(tmp.load())) ...
 ...
 ```
 
 Values here need to match up with `META_COLLECT_TAG` and `META_COLLECT_MAXCOUNT` as they relate to the unit name verification. (where the length of `MAXCOUNT` string is 5 or less)
 
 ```py
-        out.store(Bytes("<META_COLLECT_TAG>#")),
-        tmp.store(uint_to_bytes(arg)),
-        For(num.store(Int(<len(str(META_COLLECT_MAXCOUNT))>)  ...
+    out.store(Bytes("<META_COLLECT_TAG>#")),
+    tmp.store(uint_to_bytes(arg)),
+    For(num.store(Int(<len(str(META_COLLECT_MAXCOUNT))>)  ...
 ```
 
 ## Usage
@@ -130,57 +140,60 @@ Values here need to match up with `META_COLLECT_TAG` and `META_COLLECT_MAXCOUNT`
 Step by step setup and collection publication routine. While the goal is to automate things. At this point, steps are split up for manual verification and corrections when needed.
 
 **ToDo: Varify IPFS Uploads: download and check hashes**
+
 **Verification needs to be done manually for now**
 
-> 0. Setup the configuration
+0. Setup the configuration
 
 ```
 setup the environment variables
 avoid storing pass-phrase in files
 ```
 
-> 1. Create and start a network node
+1. Create and start a network node
 
 ```
 go run ./cmd/publish network create
 go run ./cmd/publish network start
 ```
 
-> 2. Create and set up the manager account.
->    - use info to check on account balance
->    - on a `devnet` node it funds the account
+2. Create and set up the manager account.
+   - use info to check on account balance
+   - on a `devnet` node it funds the account
 
 ```
 go run ./cmd/publish account create
 go run ./cmd/publish account info
 ```
 
-> 3. Build and push the collection contract
+3. Build and push the collection contract
 
 ```
 go run ./cmd/publish contract build
 go run ./cmd/publish contract push
 ```
 
-> 4. Setup the ASA Data for the contract
+4. Setup the ASA Data for the contract
 
 ```
 go run ./cmd/publish contract image
 go run ./cmd/publish contract meta
 ```
 
-> 5. Setup the ASA Data for the assets
+5. Setup the ASA Data for the assets
 
 ```
 go run ./cmd/publish assets image
 go run ./cmd/publish assets meta
 ```
 
-> 6. Build transactions and mint assets
+6. Build transactions and mint assets
 
 ```
 go run ./cmd/publish assets mint
 ```
+
+While plenty of artifacts are created in the `./assets` folder, the primary file will be the `./assets/assets.json` file as it contains the network id of all ASA assets published onto the network. As well as the `./assets/accounts/<manager>.acc` as it is the account that created and owns the assets.
 
 ### Extra commands
 
